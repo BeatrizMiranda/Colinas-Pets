@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "305421231201",
+    "firebase_url": "https://colinas-pets-default-rtdb.firebaseio.com",
+    "project_id": "colinas-pets",
+    "storage_bucket": "colinas-pets.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:305421231201:android:7eeac8f75666f5bae07620",
+        "android_client_info": {
+          "package_name": "com.example.colinas_pets"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDt1Zl8pfb3vZgJER2vHKqkWsl8XKkyEEg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
