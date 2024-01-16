@@ -1,9 +1,11 @@
 import 'package:colinas_pets/database/get_pets.dart';
 import 'package:colinas_pets/globals/style_guide.dart';
+import 'package:colinas_pets/pets/pets_details.dart';
 import 'package:colinas_pets/shared/models/pets.dart';
 import 'package:colinas_pets/shared/utils.dart';
 import 'package:feather_icons/feather_icons.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'dart:async';
 
 class AnimalsList extends StatefulWidget {
@@ -26,7 +28,7 @@ class _AnimalsListState extends State<AnimalsList> {
 
     _debounceTimer = Timer(const Duration(milliseconds: 500), () {
       // Call your callback function here
-      print('Typing finished: $text');
+      debugPrint('Typing finished: $text');
 
       if (mounted) {
         setState(() {
@@ -99,57 +101,89 @@ class _AnimalsListState extends State<AnimalsList> {
           ),
           const SizedBox(height: 20),
           Expanded(
-            child: FutureBuilder<List<PetsModel>>(
-              future: _pets,
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator());
-                } else if (snapshot.hasError) {
-                  return Text('Error: ${snapshot.error}');
-                } else {
-                  List<PetsModel> pets = snapshot.data ?? [];
+            child: AnimationLimiter(
+              child: FutureBuilder<List<PetsModel>>(
+                future: _pets,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  } else if (snapshot.hasError) {
+                    return Text('Error: ${snapshot.error}');
+                  } else {
+                    List<PetsModel> pets = snapshot.data ?? [];
 
-                  return ListView.builder(
-                    itemCount: pets.length,
-                    itemBuilder: (context, index) {
-                      return Card(
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 10.0),
-                          child: ListTile(
-                            leading: ClipRRect(
-                              borderRadius: BorderRadius.circular(60),
-                              child: pets[index].imageUrl?.isNotEmpty == true
-                                  ? FadeInImage.assetNetwork(
-                                      placeholder: 'src/img/defaultImg.png',
-                                      image: pets[index].imageUrl!,
-                                      fit: BoxFit.cover,
-                                      width: 60,
-                                      height: 60,
-                                    )
-                                  : Image.asset(
-                                      'src/img/defaultImg.png',
-                                      width: 60,
-                                      height: 60,
+                    return ListView.builder(
+                      itemCount: pets.length,
+                      itemBuilder: (context, index) {
+                        return AnimationConfiguration.staggeredList(
+                          position: index,
+                          delay: const Duration(milliseconds: 500),
+                          duration: const Duration(milliseconds: 1000),
+                          child: SlideAnimation(
+                            verticalOffset: 44.0,
+                            child: FadeInAnimation(
+                              delay: const Duration(milliseconds: 500),
+                              child: InkWell(
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => const PetsDetails(),
                                     ),
+                                  );
+                                },
+                                child: Card(
+                                  color: Palette.lighterBlue,
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 10.0),
+                                    child: ListTile(
+                                      leading: ClipRRect(
+                                        borderRadius: BorderRadius.circular(60),
+                                        child: pets[index]
+                                                    .imageUrl
+                                                    ?.isNotEmpty ==
+                                                true
+                                            ? FadeInImage.assetNetwork(
+                                                placeholder:
+                                                    'src/img/defaultImg.png',
+                                                image: pets[index].imageUrl!,
+                                                fit: BoxFit.cover,
+                                                width: 55,
+                                                height: 55,
+                                              )
+                                            : Image.asset(
+                                                'src/img/defaultImg.png',
+                                                width: 55,
+                                                height: 55,
+                                              ),
+                                      ),
+                                      title: Text(
+                                        pets[index].name.capitalize(),
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyMedium,
+                                      ),
+                                      subtitle: pets[index].person != null
+                                          ? Text(
+                                              '${pets[index].person?.name} - ${pets[index].person?.lot}',
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodySmall,
+                                            )
+                                          : null,
+                                    ),
+                                  ),
+                                ),
+                              ),
                             ),
-                            title: Text(
-                              pets[index].name.capitalize(),
-                              style: Theme.of(context).textTheme.bodyMedium,
-                            ),
-                            subtitle: pets[index].person != null
-                                ? Text(
-                                    '${pets[index].person?.name} - ${pets[index].person?.lot}',
-                                    style:
-                                        Theme.of(context).textTheme.bodySmall,
-                                  )
-                                : null,
                           ),
-                        ),
-                      );
-                    },
-                  );
-                }
-              },
+                        );
+                      },
+                    );
+                  }
+                },
+              ),
             ),
           ),
         ],

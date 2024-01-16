@@ -2,9 +2,6 @@ bool isAdmin = false;
 String token = '';
 String userName = '';
 
-final String getHumans = "/human";
-final String getAnimals = "/animals";
-
 // void getHumans() async {
 //   DatabaseReference ref = FirebaseDatabase.instance.ref("users/123");
 //   final ref = FirebaseDatabase.instance.ref();

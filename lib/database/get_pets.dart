@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:colinas_pets/database/firestore.dart';
 import 'package:colinas_pets/shared/models/pets.dart';
+import 'package:flutter/material.dart';
 
 Future<List<PetsModel>> getAllPets({String? searchName}) async {
   FirebaseFirestore db = DBFirestore.get();
@@ -13,14 +14,14 @@ Future<List<PetsModel>> getAllPets({String? searchName}) async {
     if (searchName != null && searchName.isNotEmpty) {
       petsQuery = petsQuery
           .where('name', isGreaterThanOrEqualTo: searchName)
-          .where('name', isLessThan: searchName + 'z');
+          .where('name', isLessThan: '${searchName}z');
     }
 
     final petsSnapshot = await petsQuery.get();
 
     for (final petDoc in petsSnapshot.docs) {
       final petData = petDoc.data() as Map<String, dynamic>;
-      final personRef = petData?['person'];
+      final personRef = petData['person'];
       dynamic personData;
 
       if (personRef != null) {
@@ -33,7 +34,7 @@ Future<List<PetsModel>> getAllPets({String? searchName}) async {
       pets.add(petModel);
     }
   } catch (error) {
-    print("Error getting document: $error");
+    debugPrint("Error getting document: $error");
   }
 
   return pets;
