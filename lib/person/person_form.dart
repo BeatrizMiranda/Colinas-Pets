@@ -1,3 +1,5 @@
+import 'package:colinas_pets/globals/components/app_bar.dart';
+import 'package:colinas_pets/globals/components/my_drawer.dart';
 import 'package:flutter/material.dart';
 
 class PersonForm extends StatelessWidget {
@@ -6,9 +8,8 @@ class PersonForm extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('PersonForm'),
-      ),
+      drawer: const MyDrawer(),
+      appBar: const MyAppBar(),
       body: Center(
         child: ElevatedButton(
           onPressed: () {

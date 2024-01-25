@@ -1,4 +1,8 @@
 import 'dart:convert';
+import 'dart:io';
+
+import 'package:colinas_pets/database/firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 
 class PersonModel {
   final String name;
@@ -6,6 +10,7 @@ class PersonModel {
   final int houseNumber;
   final String? lot;
   final String? phone;
+  final String? imageUrl;
   final String status;
 
   PersonModel({
@@ -15,6 +20,7 @@ class PersonModel {
     this.lot = '',
     this.phone = '',
     this.status = 'UNVERIFIED',
+    this.imageUrl,
   });
 
   factory PersonModel.fromMap(Map<String, dynamic> map) {
@@ -25,6 +31,7 @@ class PersonModel {
       lot: map['lot'] ?? '',
       phone: map['phone'] ?? '',
       status: map['status'] ?? 'UNVERIFIED',
+      imageUrl: map['imageUrl'],
     );
   }
 
@@ -38,12 +45,33 @@ class PersonModel {
         'lot': lot,
         'phone': phone,
         'status': status,
+        'imageUrl': imageUrl
       };
+
+  Future<String> uploadImage(File imageFile, String petName) async {
+    final storageRef = FirebaseStorage.instance.ref();
+    final storageReference = storageRef.child('pet_images/$petName.jpg');
+
+    await storageReference.putFile(imageFile);
+
+    final imageUrl = await storageReference.getDownloadURL();
+
+    return imageUrl;
+  }
+
+  Future<void> addPersonWithImage(PersonModel person, File imageFile) async {
+    final imageUrl = await uploadImage(imageFile, person.name);
+
+    await DBFirestore.get().collection('person').add({
+      ...person.toMap(),
+      'imageUrl': imageUrl,
+    });
+  }
 
   String toJson() => jsonEncode(toMap());
 
   @override
   String toString() {
-    return 'PersonModel { name: $name, street: $street, houseNumber: $houseNumber, lot: $lot, phone: $phone, status: $status} ';
+    return 'PersonModel { name: $name, street: $street, houseNumber: $houseNumber, lot: $lot, phone: $phone, status: $status}, imageUrl: $imageUrl';
   }
 }

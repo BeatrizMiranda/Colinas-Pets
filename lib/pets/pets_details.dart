@@ -1,3 +1,6 @@
+import 'package:colinas_pets/globals/components/app_bar.dart';
+import 'package:colinas_pets/globals/components/my_drawer.dart';
+import 'package:colinas_pets/globals/style_guide.dart';
 import 'package:flutter/material.dart';
 
 class PetsDetails extends StatelessWidget {
@@ -6,15 +9,28 @@ class PetsDetails extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Pet details'),
-      ),
-      body: Center(
-        child: ElevatedButton(
-          onPressed: () {
-            // Navigate back to first route when tapped.
-          },
-          child: const Text('Go back!'),
+      drawer: const MyDrawer(),
+      appBar: const MyAppBar(),
+      body: Container(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          children: [
+            Row(
+              children: [
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 20),
+                    foregroundColor: Palette.lightBlack,
+                  ),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: const Icon(Icons.arrow_back),
+                ),
+                const Text('Afonso')
+              ],
+            ),
+          ],
         ),
       ),
     );

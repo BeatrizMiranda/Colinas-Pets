@@ -1,26 +1,25 @@
-import 'package:colinas_pets/database/get_pets.dart';
+import 'package:colinas_pets/database/get_people.dart';
+import 'package:colinas_pets/globals/components/app_bar.dart';
+import 'package:colinas_pets/globals/components/my_drawer.dart';
 import 'package:colinas_pets/globals/style_guide.dart';
 import 'package:colinas_pets/pets/pets_details.dart';
-import 'package:colinas_pets/shared/models/pets.dart';
+import 'package:colinas_pets/shared/models/person.dart';
 import 'package:colinas_pets/shared/utils.dart';
 import 'package:feather_icons/feather_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'dart:async';
 
-import 'package:colinas_pets/globals/components/app_bar.dart';
-import 'package:colinas_pets/globals/components/my_drawer.dart';
-
-class AnimalsList extends StatefulWidget {
-  const AnimalsList({super.key});
+class PeopleList extends StatefulWidget {
+  const PeopleList({super.key});
 
   @override
-  State<AnimalsList> createState() => _AnimalsListState();
+  State<PeopleList> createState() => _PeopleList();
 }
 
-class _AnimalsListState extends State<AnimalsList> {
+class _PeopleList extends State<PeopleList> {
   final TextEditingController _textEditingController = TextEditingController();
-  late Future<List<PetsModel>> _pets = getAllPets();
+  late Future<List<PersonModel>> _people = getAllPeople();
 
   Timer? _debounceTimer;
 
@@ -35,7 +34,7 @@ class _AnimalsListState extends State<AnimalsList> {
 
       if (mounted) {
         setState(() {
-          _pets = getAllPets(searchName: text);
+          _people = getAllPeople(searchName: text);
         });
       }
     });
@@ -63,7 +62,7 @@ class _AnimalsListState extends State<AnimalsList> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Pets',
+              'Moradores',
               style: Theme.of(context).textTheme.displayLarge,
             ),
             const SizedBox(height: 20),
@@ -74,7 +73,7 @@ class _AnimalsListState extends State<AnimalsList> {
                     controller: _textEditingController,
                     onChanged: _onTypingFinished,
                     decoration: InputDecoration(
-                      labelText: 'Pesquisar nome do animal',
+                      labelText: 'Pesquisar nome do morador',
                       contentPadding: const EdgeInsets.all(10),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(40.0),
@@ -108,18 +107,18 @@ class _AnimalsListState extends State<AnimalsList> {
             const SizedBox(height: 20),
             Expanded(
               child: AnimationLimiter(
-                child: FutureBuilder<List<PetsModel>>(
-                  future: _pets,
+                child: FutureBuilder<List<PersonModel>>(
+                  future: _people,
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return const Center(child: CircularProgressIndicator());
                     } else if (snapshot.hasError) {
                       return Text('Error: ${snapshot.error}');
                     } else {
-                      List<PetsModel> pets = snapshot.data ?? [];
+                      List<PersonModel> people = snapshot.data ?? [];
 
                       return ListView.builder(
-                        itemCount: pets.length,
+                        itemCount: people.length,
                         itemBuilder: (context, index) {
                           return AnimationConfiguration.staggeredList(
                             position: index,
@@ -143,19 +142,21 @@ class _AnimalsListState extends State<AnimalsList> {
                                     color: Palette.lighterBlue,
                                     child: Padding(
                                       padding: const EdgeInsets.symmetric(
-                                          vertical: 10.0),
+                                        vertical: 10.0,
+                                      ),
                                       child: ListTile(
                                         leading: ClipRRect(
                                           borderRadius:
                                               BorderRadius.circular(60),
-                                          child: pets[index]
+                                          child: people[index]
                                                       .imageUrl
                                                       ?.isNotEmpty ==
                                                   true
                                               ? FadeInImage.assetNetwork(
                                                   placeholder:
                                                       'src/img/defaultImg.png',
-                                                  image: pets[index].imageUrl!,
+                                                  image:
+                                                      people[index].imageUrl!,
                                                   fit: BoxFit.cover,
                                                   width: 55,
                                                   height: 55,
@@ -167,19 +168,19 @@ class _AnimalsListState extends State<AnimalsList> {
                                                 ),
                                         ),
                                         title: Text(
-                                          pets[index].name.capitalize(),
+                                          maxLines: 2,
+                                          people[index].name.capitalize(),
+                                          overflow: TextOverflow.ellipsis,
                                           style: Theme.of(context)
                                               .textTheme
                                               .bodyMedium,
                                         ),
-                                        subtitle: pets[index].person != null
-                                            ? Text(
-                                                '${pets[index].person?.name} - ${pets[index].person?.lot}',
-                                                style: Theme.of(context)
-                                                    .textTheme
-                                                    .bodySmall,
-                                              )
-                                            : null,
+                                        subtitle: Text(
+                                          '${people[index].street}, ${people[index].houseNumber} - ${people[index].lot}',
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodySmall,
+                                        ),
                                       ),
                                     ),
                                   ),
