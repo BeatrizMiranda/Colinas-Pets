@@ -2,6 +2,7 @@ import 'package:colinas_pets/animals_list.dart';
 import 'package:colinas_pets/people_list.dart';
 import 'package:colinas_pets/person/person_form.dart';
 import 'package:colinas_pets/pets/pets_form.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
@@ -15,6 +16,7 @@ Future<void> main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  await FirebaseAuth.instance.signInAnonymously();
 
   runApp(const MyApp());
 }
